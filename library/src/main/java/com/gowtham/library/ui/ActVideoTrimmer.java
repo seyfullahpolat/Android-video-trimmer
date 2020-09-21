@@ -96,7 +96,7 @@ public class ActVideoTrimmer extends AppCompatActivity {
 
     private Handler seekHandler;
 
-    private long currentDuration,lastClickedTime;
+    private long currentDuration, lastClickedTime;
 
     private CompressOption compressOption;
 
@@ -450,15 +450,15 @@ public class ActVideoTrimmer extends AppCompatActivity {
             showProcessingDialog();
             String[] complexCommand;
             if (compressOption != null)
-                complexCommand=getCompressionCommand();
-             else if (isAccurateCut)
+                complexCommand = getCompressionCommand();
+            else if (isAccurateCut)
                 complexCommand = getAccurateBinary();
             else {
                 complexCommand = new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                         "-i", String.valueOf(uri),
                         "-t",
                         TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
-                        "-async", "1", "-strict", "-2","-c","copy", outputPath};
+                        "-async", "1", "-strict", "-2", "-c", "copy", outputPath};
             }
             execFFmpegBinary(complexCommand, true);
         } else
@@ -472,25 +472,24 @@ public class ActVideoTrimmer extends AppCompatActivity {
         String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
         int w = TrimmerUtils.clearNull(width).isEmpty() ? 0 : Integer.parseInt(width);
         int h = Integer.parseInt(height);
-        if (compressOption.getWidth()!=0 || compressOption.getHeight()!=0
-                || !compressOption.getBitRate().equals("0k")){
+        if (compressOption.getWidth() != 0 || compressOption.getHeight() != 0
+                || !compressOption.getBitRate().equals("0k")) {
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                     "-i", String.valueOf(uri), "-s", compressOption.getWidth() + "x" +
                     compressOption.getHeight(),
                     "-r", String.valueOf(compressOption.getFrameRate()),
                     "-vcodec", "mpeg4", "-b:v",
                     compressOption.getBitRate(), "-b:a", "48000", "-ac", "2", "-ar",
-                    "22050","-t",
+                    "22050", "-t",
                     TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue), outputPath};
-        }
-       else if (w >= 800) {
+        } else if (w >= 800) {
             w = w / 2;
             h = Integer.parseInt(height) / 2;
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                     "-i", String.valueOf(uri),
                     "-s", w + "x" + h, "-r", "30",
                     "-vcodec", "mpeg4", "-b:v",
-                    "1M", "-b:a", "48000", "-ac", "2", "-ar", "22050",
+                    "300K", "-b:a", "48000", "-ac", "2", "-ar", "22050",
                     "-t",
                     TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue), outputPath};
         } else {
@@ -516,7 +515,7 @@ public class ActVideoTrimmer extends AppCompatActivity {
                     if (dialog.isShowing())
                         dialog.dismiss();
                 } else {
-                    if (retry && !isAccurateCut && compressOption==null) {
+                    if (retry && !isAccurateCut && compressOption == null) {
                         File newFile = new File(outputPath);
                         if (newFile.exists())
                             newFile.delete();
